@@ -1,0 +1,11 @@
+{
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "git.autofetch": true,
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.git/objects/**": true,
+    "**/dist/**": true
+  },
+  "terminal.integrated.fontSize": 13
+}
