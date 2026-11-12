@@ -1,0 +1,28 @@
+[project]
+name = "retail-agent"
+version = "0.1.0"
+description = "Retail Returns Assistant v1 REST API"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi==0.162.2",
+    "pydantic==2.14.3",
+    "uvicorn==0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.2.0",
+    "pytest-cov==7.1.0",
+    "httpx==0.28.1",
+    "pip-audit==2.10.1",
+    "bandit==1.9.4",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "--cov=src/retail_agent/domain --cov=src/retail_agent/services --cov-report=term-missing --cov-fail-under=90"
