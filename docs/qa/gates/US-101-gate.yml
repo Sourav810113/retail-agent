@@ -1,0 +1,44 @@
+# QA gate for US-101. Rule: PASS only if every AC-1..AC-4 is traced and
+# passing and coverage >= 90; otherwise FAIL.
+# Evidence: `uv run pytest -q --cov=src` (rerun after scans), 2026-11-10, branch feature/us-101-returns
+# (uncommitted working tree). Trace: docs/qa/assessments/US-101-trace.md
+story: US-101
+status: PASS
+status_reason: "AC-1..AC-4 traced, 4/4 passing; src coverage 99.40% >= 90"
+date: "2026-11-10"
+coverage:
+  scope: src
+  percent: 99.40
+  statements: 501
+  missed: 3
+  missed_lines: "src/retail_agent/api/errors.py: 52, 113-114"
+  business_logic_percent: 100.00  # domain/ + services/, the pyproject fail-under target
+tests:
+  total: 229
+  passed: 229
+  failed: 0
+acceptance_criteria:
+  AC-1: PASS
+  AC-2: PASS
+  AC-3: PASS
+  AC-4: PASS
+scans:
+  bandit: pass  # bandit 1.9.4, `bandit -r src`: 0 issues (0 high/med/low), 743 LOC, 0 nosec
+  pip-audit: pass  # pip-audit 2.10.1 on the project venv: 51 packages, 0 known vulnerabilities
+  gitleaks: pending  # not installed on this machine; not run
+risks:  # full detail: docs/qa/assessments/US-101-risk.md
+  - {id: R1, title: Order enumeration via differing 404, likelihood: med, impact: high, status: mitigated}
+  - {id: R2, title: Customer email leak (response/audit/logs), likelihood: med, impact: high, status: mitigated}
+  - {id: R3, title: Lookup not audited or 404 audit lost, likelihood: med, impact: high, status: mitigated}
+  - {id: R4, title: Audit storage exhaustion via long IDs, likelihood: med, impact: med, status: partial}
+  - {id: R5, title: Wrong return deadline, likelihood: low, impact: med, status: mitigated}
+  - {id: R6, title: Email normalization mismatch, likelihood: med, impact: med, status: mitigated}
+  - {id: R7, title: Missing/blank email header accepted, likelihood: low, impact: med, status: mitigated}
+  - {id: R8, title: Money formatting errors, likelihood: low, impact: med, status: mitigated}
+  - {id: R9, title: Slash/empty IDs bypass lookup unaudited, likelihood: med, impact: low, status: open}
+  - {id: R10, title: Health returns 500 not 503 for non-DB errors, likelihood: low, impact: low, status: open}
+  - {id: R11, title: Wall-clock reads bypass Clock, likelihood: low, impact: med, status: mitigated}
+  - {id: R12, title: Vulnerable dependency or committed secret, likelihood: low, impact: high, status: partial}  # deps + static clean; secret scan pending
+notes:
+  - "bandit and pip-audit ran clean on 2026-11-10. gitleaks is still pending (not installed); run it before merge."
+  - "9 low-severity code-review items remain open in docs/stories/US-101.md (Review Findings)."
